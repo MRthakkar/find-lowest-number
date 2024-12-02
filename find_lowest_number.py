@@ -15,25 +15,33 @@
 
 import sys
 
+# Check if the correct number of arguments is provided
+if len(sys.argv) != 3:
+    print("Usage: python3 find_lowest_number.py <input_file> <output_file>")
+    sys.exit(1)
+
 input_filename = sys.argv[1]
 output_filename = sys.argv[2]
 
-number_found = False
+try:
+    # Read all numbers from the input file
+    with open(input_filename, 'r') as input_file:
+        numbers = [float(line.strip()) for line in input_file if line.strip()]
 
-with open(input_filename, 'r') as input_file:
-    for line in input_file:
-        if number_found == False:
-            try:
-                lowest_number = float(line)
-                number_found = True
-            except ValueError:
-                break
+    # Write the result to the output file
+    with open(output_filename, 'w') as output_file:
+        if numbers:
+            lowest_number = min(numbers)
+            output_file.write(f"{lowest_number}\n")
         else:
-            if float(line) < lowest_number:
-                lowest_number = float(line)
+            output_file.write("No numbers found in file\n")
 
-with open(output_filename, 'w') as output_file:
-    if number_found:
-        output_file.write(str(lowest_number) + "\n")
-    else:
-        output_file.write("No numbers found in file\n")
+except FileNotFoundError:
+    print(f"Error: The file '{input_filename}' does not exist.")
+    sys.exit(1)
+except ValueError:
+    print("Error: The input file contains invalid data.")
+    sys.exit(1)
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+    sys.exit(1)
